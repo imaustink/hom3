@@ -102,6 +102,7 @@ export function renderHeader(state: AppState, width: number): string {
     badge('<a>', 'Area'),
     badge('<r>', 'Refresh'),
     badge('</>', 'Filter'),
+    badge('<y>', 'Yank'),
     badge('<?>', 'Help'),
     badge('<q>', 'Quit'),
   ];
@@ -246,6 +247,7 @@ export function renderDetail(entity: HassEntity | null, panelInnerWidth = 30): s
   if (toggleable.includes(domain)) {
     lines.push(`{${COLORS.green}-fg}[t]{/} Toggle`);
   }
+  lines.push(`{${COLORS.yellow}-fg}[y]{/} Copy entity_id`);
   lines.push(`{${COLORS.cyan}-fg}[?]{/} Help`);
 
   return lines.join('\n');
@@ -373,8 +375,8 @@ export function renderHelp(): string {
     ` ${k('/')}          ${d('Filter entities (fuzzy)')}`,
     ` ${k('d')}          ${d('Describe / inspect entity')}`,
     ` ${k('r')}          ${d('Refresh states')}`,
+    ` ${k('y')}          ${d('Copy entity_id to clipboard')}`,
     ` ${k('?')}          ${d('Toggle this help')}`,
-
     ` ${k('q / ctrl+c')} ${d('Quit')}`,
     '',
     '',

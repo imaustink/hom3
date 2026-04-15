@@ -47,7 +47,6 @@ export class App {
 
   private state: AppState;
   private areaMap: Map<string, string> = new Map(); // entity_id → area name
-  private registryMap: Map<string, import('./types').HassEntityRegistryEntry> = new Map();
   private refreshTimer: NodeJS.Timeout | null = null;
   private headerTimer: NodeJS.Timeout | null = null;
 
@@ -165,13 +164,13 @@ export class App {
   // ─────────────────────────────────────────────────────────────────────────
 
   private refreshEntities(): void {
-    this.registryMap = new Map(
+    const registryMap = new Map(
       this.client.entityRegistry.map((e) => [e.entity_id, e])
     );
 
     this.state.entities = this.client.getEntityList()
       .filter((entity) => {
-        const reg = this.registryMap.get(entity.entity_id);
+        const reg = registryMap.get(entity.entity_id);
         if (!reg) return true; // not in registry → include
         if (reg.hidden_by !== null) return false; // hidden by default → exclude
         if (reg.device_id === null) return false; // non-device entity → exclude
@@ -477,7 +476,11 @@ export class App {
         } else if (key.name === 'down') {
           this.navigateAutocomplete(1);
           return;
-        } else if (key.name === 'enter') {
+        } else if (key.name === 'enter' || key.name === 'return') {
+          // If a suggestion is highlighted, accept it first
+          if (this.state.autocompleteSuggestions.length > 0) {
+            this.acceptAutocomplete();
+          }
           const cmd = this.state.commandBuffer;
           this.state.commandMode = false;
           this.state.commandBuffer = '';
@@ -485,6 +488,7 @@ export class App {
           this.renderCommandBarView();
           screen.render();
           this.executeCommand(cmd);
+          return;
         } else if (key.name === 'escape') {
           this.state.commandMode = false;
           this.state.commandBuffer = '';
@@ -496,7 +500,7 @@ export class App {
           this.updateAutocomplete();
           this.renderCommandBarView();
           screen.render();
-        } else if (_ch && !key.ctrl && !key.meta && key.name !== 'escape') {
+        } else if (_ch && !key.ctrl && !key.meta && _ch !== '\r' && _ch !== '\n' && key.name !== 'escape') {
           this.state.commandBuffer += _ch;
           this.updateAutocomplete();
           this.renderCommandBarView();
@@ -527,13 +531,13 @@ export class App {
           this.updateAutocomplete();
           this.applyFilter();
           return;
-        } else if (key.name === 'enter') {
+        } else if (key.name === 'enter' || key.name === 'return') {
           this.state.filterMode = false;
           this.hideAutocomplete();
           this.renderCommandBarView();
           screen.render();
           return;
-        } else if (_ch && !key.ctrl && !key.meta) {
+        } else if (_ch && !key.ctrl && !key.meta && _ch !== '\r' && _ch !== '\n') {
           this.state.filter += _ch;
           this.updateAutocomplete();
           this.applyFilter();
@@ -903,18 +907,11 @@ export class App {
     this.client.on('state_changed', (change: { entity_id: string; new_state: HassEntity | null }) => {
       // Update entity in local state list
       if (change.new_state) {
-        const reg = this.registryMap.get(change.entity_id);
-        const allowed = !reg || (reg.hidden_by === null && reg.device_id !== null);
         const idx = this.state.entities.findIndex((e) => e.entity_id === change.entity_id);
-        if (allowed) {
-          if (idx >= 0) {
-            this.state.entities[idx] = change.new_state;
-          } else {
-            this.state.entities.push(change.new_state);
-          }
-        } else if (idx >= 0) {
-          // entity became hidden/non-device — remove it
-          this.state.entities.splice(idx, 1);
+        if (idx >= 0) {
+          this.state.entities[idx] = change.new_state;
+        } else {
+          this.state.entities.push(change.new_state);
         }
       } else {
         this.state.entities = this.state.entities.filter((e) => e.entity_id !== change.entity_id);

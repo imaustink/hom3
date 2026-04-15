@@ -44,7 +44,7 @@ export class HassClient extends EventEmitter {
     });
   }
 
-  async connect(): Promise<void> {
+  async connect(subscribe = true): Promise<void> {
     return new Promise((resolve, reject) => {
       const wsUrl = this.config.url
         .replace(/^http/, 'ws')
@@ -81,7 +81,7 @@ export class HassClient extends EventEmitter {
           clearTimeout(timeout);
           this.connected = true;
           try {
-            await this.bootstrap();
+            await this.bootstrap(subscribe);
             resolve();
           } catch (e) {
             reject(e as Error);
@@ -128,7 +128,7 @@ export class HassClient extends EventEmitter {
     });
   }
 
-  private async bootstrap(): Promise<void> {
+  private async bootstrap(subscribe = true): Promise<void> {
     // Load all states
     const states = await this.request<HassEntity[]>({ type: 'get_states' });
     for (const entity of states) {
@@ -162,6 +162,8 @@ export class HassClient extends EventEmitter {
       this.entityRegistry = [];
     }
 
+    if (!subscribe) return;
+
     // Subscribe to state changes
     this.subscribeId = this.nextId();
     this.send({
@@ -176,6 +178,21 @@ export class HassClient extends EventEmitter {
       type: 'call_service',
       domain,
       service,
+      service_data: serviceData,
+    });
+  }
+
+  async callServiceWithTarget(
+    domain: string,
+    service: string,
+    target: { area_id?: string | string[]; device_id?: string | string[]; entity_id?: string | string[] },
+    serviceData: Record<string, unknown> = {},
+  ): Promise<void> {
+    await this.request({
+      type: 'call_service',
+      domain,
+      service,
+      target,
       service_data: serviceData,
     });
   }

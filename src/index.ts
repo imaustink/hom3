@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { HassClient } from './hass-client';
 import { App } from './app';
 import { HassConfig } from './types';
+import { parseCliArgs, runCli } from './cli';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Load config: CLI flags → env vars → ~/.config/hatui/config.json
@@ -31,7 +32,6 @@ function getConfig(): HassConfig {
     if (args[i] === '--url' && args[i + 1]) url = args[++i];
     if (args[i] === '--token' && args[i + 1]) token = args[++i];
   }
-
   // 2. Environment variables
   if (!url) url = process.env['HASS_URL'] ?? process.env['HA_URL'] ?? '';
   if (!token) token = process.env['HASS_TOKEN'] ?? process.env['HA_TOKEN'] ?? '';
@@ -66,13 +66,35 @@ function printUsage(): void {
   console.log(`
   ${'\x1b[96m'}HATUI${'\x1b[0m'} – k9s-inspired Home Assistant TUI
 
-  ${'\x1b[2m'}Usage:${'\x1b[0m'}
+  ${'\x1b[2m'}Usage (interactive TUI):${'\x1b[0m'}
     hatui [--url <url>] [--token <token>]
 
+  ${'\x1b[2m'}Usage (one-off commands):${'\x1b[0m'}
+    hatui get entities  [--domain <type>] [--search <text>] [--area <name>] [-o table|wide|json]
+    hatui get entity    <entity_id>       [-o table|json]
+    hatui get areas     [-o table|json]
+    hatui get devices   [-o table|json]
+    hatui toggle        <entity_id>
+    hatui toggle        --area <name> [--domain <domain>]
+    hatui turn-on       <entity_id>
+    hatui turn-on       --area <name> [--domain <domain>]
+    hatui turn-off      <entity_id>
+    hatui turn-off      --area <name> [--domain <domain>]
+    hatui call          <domain> <service> [--entity <id>] [--data <json>]
+
+  ${'\x1b[2m'}Area examples:${'\x1b[0m'}
+    hatui turn-off --area "Living Room"           # turn off all lights
+    hatui turn-off --area kitchen --domain switch  # turn off switches
+    hatui turn-on  --area bedroom                 # partial name match
+
+  ${'\x1b[2m'}Domain shortcuts for --domain:${'\x1b[0m'}
+    lights, switches, sensors, bs (binary_sensors), climate, covers,
+    fans, media (media_players), auto (automations), locks, cameras …
+
   ${'\x1b[2m'}Configuration (in order of precedence):${'\x1b[0m'}
-    1. CLI flags:           --url http://homeassistant.local:8123 --token <your_token>
-    2. Environment:         HASS_URL=...  HASS_TOKEN=...
-    3. Config file:         ~/.config/hatui/config.json
+    1. CLI flags:   --url http://homeassistant.local:8123 --token <token>
+    2. Environment: HASS_URL=...  HASS_TOKEN=...
+    3. Config file: ~/.config/hatui/config.json
 
   ${'\x1b[2m'}Config file format:${'\x1b[0m'}
     {
@@ -93,9 +115,28 @@ async function main(): Promise<void> {
 
   const config = getConfig();
   const client = new HassClient(config);
-  const app = new App(client);
 
-  await app.start();
+  // Strip connection flags from argv to get the remaining subcommands
+  const rawArgs = process.argv.slice(2);
+  const stripped: string[] = [];
+  for (let i = 0; i < rawArgs.length; i++) {
+    if ((rawArgs[i] === '--url' || rawArgs[i] === '--token') && rawArgs[i + 1]) {
+      i++; // skip value
+    } else {
+      stripped.push(rawArgs[i]);
+    }
+  }
+
+  const cliArgs = parseCliArgs(stripped);
+
+  if (cliArgs) {
+    // Non-interactive one-off command (kubectl-style)
+    await runCli(client, cliArgs);
+  } else {
+    // Interactive TUI mode
+    const app = new App(client);
+    await app.start();
+  }
 }
 
 main().catch((err) => {
