@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs';
 import { HassClient } from './hass-client';
@@ -7,33 +6,41 @@ import { App } from './app';
 import { HassConfig } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Load config from env or .env file
+// Load config: CLI flags → env vars → ~/.config/hatui/config.json
 // ─────────────────────────────────────────────────────────────────────────────
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+const CONFIG_PATH = path.resolve(process.env['HOME'] ?? '~', '.config', 'hatui', 'config.json');
+
+function loadJsonConfig(): Partial<HassConfig> {
+  if (!fs.existsSync(CONFIG_PATH)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8')) as Partial<HassConfig>;
+  } catch {
+    console.error(`  ✖ Failed to parse config file: ${CONFIG_PATH}`);
+    return {};
+  }
+}
 
 function getConfig(): HassConfig {
-  // Check for args: --url <url> --token <token>
   const args = process.argv.slice(2);
-  let url = process.env['HASS_URL'] ?? process.env['HA_URL'] ?? '';
-  let token = process.env['HASS_TOKEN'] ?? process.env['HA_TOKEN'] ?? '';
+  let url = '';
+  let token = '';
 
+  // 1. CLI flags
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--url' && args[i + 1]) url = args[++i];
     if (args[i] === '--token' && args[i + 1]) token = args[++i];
   }
 
+  // 2. Environment variables
+  if (!url) url = process.env['HASS_URL'] ?? process.env['HA_URL'] ?? '';
+  if (!token) token = process.env['HASS_TOKEN'] ?? process.env['HA_TOKEN'] ?? '';
+
+  // 3. ~/.config/hatui/config.json
   if (!url || !token) {
-    const configPath = path.resolve(process.env['HOME'] ?? '~', '.config', 'hatui', 'config.json');
-    if (fs.existsSync(configPath)) {
-      try {
-        const cfg = JSON.parse(fs.readFileSync(configPath, 'utf-8')) as Partial<HassConfig>;
-        if (cfg.url && !url) url = cfg.url;
-        if (cfg.token && !token) token = cfg.token;
-      } catch {
-        // ignore
-      }
-    }
+    const cfg = loadJsonConfig();
+    if (cfg.url && !url) url = cfg.url;
+    if (cfg.token && !token) token = cfg.token;
   }
 
   if (!url) {
@@ -65,8 +72,7 @@ function printUsage(): void {
   ${'\x1b[2m'}Configuration (in order of precedence):${'\x1b[0m'}
     1. CLI flags:           --url http://homeassistant.local:8123 --token <your_token>
     2. Environment:         HASS_URL=...  HASS_TOKEN=...
-    3. .env file:           HASS_URL=...  HASS_TOKEN=...
-    4. Config file:         ~/.config/hatui/config.json
+    3. Config file:         ~/.config/hatui/config.json
 
   ${'\x1b[2m'}Config file format:${'\x1b[0m'}
     {

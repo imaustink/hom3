@@ -35,23 +35,18 @@ cd hatui
 npm install
 
 # 2. Configure
-cp .env.example .env
-# Edit .env with your HA URL and long-lived access token
+mkdir -p ~/.config/hatui
+cat > ~/.config/hatui/config.json << 'EOF'
+{
+  "url": "http://homeassistant.local:8123",
+  "token": "your_long_lived_access_token"
+}
+EOF
 
 # 3. Run
 npm run dev
 # or after building:
 npm run build && npm start
-```
-
-### Config file (alternative to .env)
-
-```json5
-// ~/.config/hatui/config.json
-{
-  "url": "http://homeassistant.local:8123",
-  "token": "your_long_lived_access_token"
-}
 ```
 
 Get a token: **HA → Profile → Long-Lived Access Tokens**
@@ -122,9 +117,20 @@ src/
 
 ---
 
-## Environment Variables
+## Configuration
 
-| Variable | Description |
-|----------|-------------|
-| `HASS_URL` | Home Assistant base URL |
-| `HASS_TOKEN` | Long-lived access token |
+HATUI loads config in this order of precedence:
+
+| Source | Example |
+|--------|---------|
+| CLI flags | `--url http://homeassistant.local:8123 --token <token>` |
+| Environment variables | `HASS_URL=...` `HASS_TOKEN=...` |
+| Config file | `~/.config/hatui/config.json` |
+
+```json
+// ~/.config/hatui/config.json
+{
+  "url": "http://homeassistant.local:8123",
+  "token": "your_long_lived_access_token"
+}
+```
