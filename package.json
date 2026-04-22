@@ -1,6 +1,6 @@
 {
-  "name": "hom3",
-  "version": "1.0.2",
+  "name": "@k5s/hom3",
+  "version": "1.0.0",
   "description": "k9s-inspired TUI for Home Assistant",
   "main": "dist/index.js",
   "bin": {
