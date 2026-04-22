@@ -91,6 +91,7 @@ export class HassClient extends EventEmitter {
 
         if (msg.type === 'auth_invalid') {
           clearTimeout(timeout);
+          this.ws?.close();
           reject(new Error('Invalid Home Assistant token'));
           return;
         }
@@ -164,12 +165,20 @@ export class HassClient extends EventEmitter {
 
     if (!subscribe) return;
 
-    // Subscribe to state changes
-    this.subscribeId = this.nextId();
-    this.send({
-      id: this.subscribeId,
-      type: 'subscribe_events',
-      event_type: 'state_changed',
+    // Subscribe to state changes and await confirmation so callers know the
+    // subscription is active before they attempt to send state change events.
+    const subId = this.nextId();
+    this.subscribeId = subId;
+    await new Promise<void>((resolve, reject) => {
+      this.pendingRequests.set(subId, {
+        resolve: () => resolve(),
+        reject,
+      });
+      this.send({
+        id: subId,
+        type: 'subscribe_events',
+        event_type: 'state_changed',
+      });
     });
   }
 

@@ -60,6 +60,10 @@ function makeState(overrides: Partial<AppState> = {}): AppState {
     inputMode: null,
     inputBuffer: '',
     recentAreas: [],
+    contextMode: false,
+    homes: [],
+    activeHomeIndex: 0,
+    contextSelectedIndex: 0,
     ...overrides,
   };
 }
@@ -319,9 +323,9 @@ describe('renderTableHeader', () => {
     expect(result).not.toContain('AREA');
   });
 
-  it('includes AGE column at wider widths (>= 65)', () => {
+  it('includes CHG column at wider widths (>= 65)', () => {
     const result = renderTableHeader(80);
-    expect(result).toContain('AGE');
+    expect(result).toContain('CHG');
   });
 
   it('returns a string with blessed markup tags', () => {
@@ -415,9 +419,9 @@ describe('renderDetail', () => {
     expect(result).toContain('ATTRIBUTES');
   });
 
-  it('includes ACTIONS section', () => {
+  it('includes CONTROLS section', () => {
     const result = renderDetail(lightA, 40);
-    expect(result).toContain('ACTIONS');
+    expect(result).toContain('CONTROLS');
   });
 
   it('includes toggle action for toggleable domains', () => {

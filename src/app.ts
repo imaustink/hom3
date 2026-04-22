@@ -466,7 +466,7 @@ export class App {
     setTimeout(() => {
       this.toast.hide();
       this.screen.render();
-    }, 2500);
+    }, 2500).unref();
   }
 
   // ─────────────────────────────────────────────────────────────────────────
