@@ -1,15 +1,6 @@
-# HOM3
+# hom3
 
 k9s-inspired terminal UI for Home Assistant
-
-```
-██╗  ██╗  ██████╗  ███╗   ███╗ ██████╗ 
-██║  ██║ ██╔═══██╗ ████╗ ████║ ╚════██╗
-███████║ ██║   ██║ ██╔████╔██║  █████╔╝
-██╔══██║ ██║   ██║ ██║╚██╔╝██║  ╚═══██╗
-██║  ██║ ╚██████╔╝ ██║ ╚═╝ ██║ ██████╔╝
-╚═╝  ╚═╝  ╚═════╝  ╚═╝     ╚═╝ ╚═════╝ 
-```
 
 ![HOM3 Screenshot](img/app.png)
 
@@ -32,13 +23,31 @@ Navigate your entire Home Assistant setup from the terminal — just like `k9s` 
 
 ## Quick Start
 
+### Install from npm (recommended)
+
 ```bash
-# 1. Clone & install
+npm install -g @k5s/hom3
+```
+
+Then run:
+
+```bash
+hom3
+```
+
+### Install from source
+
+```bash
 git clone https://github.com/you/hom3
 cd hom3
 npm install
+npm run build
+npm start
+```
 
-# 2. Configure
+### Configure
+
+```bash
 mkdir -p ~/.config/hom3
 cat > ~/.config/hom3/config.json << 'EOF'
 {
@@ -51,11 +60,6 @@ cat > ~/.config/hom3/config.json << 'EOF'
   ]
 }
 EOF
-
-# 3. Run
-npm run dev
-# or after building:
-npm run build && npm start
 ```
 
 Get a token: **HA → Profile → Long-Lived Access Tokens**
