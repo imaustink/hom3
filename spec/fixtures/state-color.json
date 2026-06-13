@@ -1,0 +1,32 @@
+{
+  "description": "Maps a Home Assistant entity state string to a semantic palette token. Implementations map the token to their own color value. Default/unrecognized states map to 'textPrimary'.",
+  "function": "stateColor",
+  "paletteTokens": ["stateOn", "stateOff", "stateUnavail", "stateUnknown", "textPrimary"],
+  "cases": [
+    { "input": "on", "expect": "stateOn" },
+    { "input": "open", "expect": "stateOn" },
+    { "input": "unlocked", "expect": "stateOn" },
+    { "input": "home", "expect": "stateOn" },
+    { "input": "playing", "expect": "stateOn" },
+    { "input": "active", "expect": "stateOn" },
+    { "input": "armed_away", "expect": "stateOn" },
+    { "input": "armed_home", "expect": "stateOn" },
+    { "input": "cleaning", "expect": "stateOn" },
+    { "input": "off", "expect": "stateOff" },
+    { "input": "closed", "expect": "stateOff" },
+    { "input": "locked", "expect": "stateOff" },
+    { "input": "not_home", "expect": "stateOff" },
+    { "input": "paused", "expect": "stateOff" },
+    { "input": "idle", "expect": "stateOff" },
+    { "input": "disarmed", "expect": "stateOff" },
+    { "input": "docked", "expect": "stateOff" },
+    { "input": "standby", "expect": "stateOff" },
+    { "input": "stopped", "expect": "stateOff" },
+    { "input": "unavailable", "expect": "stateUnavail" },
+    { "input": "unknown", "expect": "stateUnknown" },
+    { "input": "heat", "expect": "textPrimary" },
+    { "input": "cool", "expect": "textPrimary" },
+    { "input": "some_custom_state", "expect": "textPrimary" },
+    { "input": "", "expect": "textPrimary" }
+  ]
+}

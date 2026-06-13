@@ -1,0 +1,16 @@
+{
+  "description": "Renders a coarse human-readable age from an ISO timestamp relative to a reference 'now'. Negative durations (clock skew) clamp to 0s. Thresholds: <60s -> 'Ns'; <60m -> 'Nm'; <24h -> 'Nh'; else 'Nd'. All values floored.",
+  "function": "timeSince",
+  "now": "2025-01-01T12:00:00.000Z",
+  "cases": [
+    { "input": "2025-01-01T11:59:45.000Z", "expect": "15s" },
+    { "input": "2025-01-01T11:59:01.000Z", "expect": "59s" },
+    { "input": "2025-01-01T11:55:00.000Z", "expect": "5m" },
+    { "input": "2025-01-01T11:01:00.000Z", "expect": "59m" },
+    { "input": "2025-01-01T09:00:00.000Z", "expect": "3h" },
+    { "input": "2024-12-31T13:00:00.000Z", "expect": "23h" },
+    { "input": "2024-12-30T12:00:00.000Z", "expect": "2d" },
+    { "input": "2025-01-01T12:00:00.000Z", "expect": "0s" },
+    { "input": "2025-01-01T12:00:05.000Z", "expect": "0s" }
+  ]
+}

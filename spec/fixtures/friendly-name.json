@@ -1,0 +1,22 @@
+{
+  "description": "Resolves an entity's display name: the 'friendly_name' attribute when present, otherwise the entity_id.",
+  "function": "friendlyName",
+  "cases": [
+    {
+      "entity": { "entity_id": "light.x", "attributes": { "friendly_name": "Living Room Light" } },
+      "expect": "Living Room Light"
+    },
+    {
+      "entity": { "entity_id": "light.living_room", "attributes": {} },
+      "expect": "light.living_room"
+    },
+    {
+      "entity": { "entity_id": "sensor.temp", "attributes": { "unit_of_measurement": "°C" } },
+      "expect": "sensor.temp"
+    },
+    {
+      "entity": { "entity_id": "switch.fan", "attributes": { "friendly_name": "" } },
+      "expect": ""
+    }
+  ]
+}

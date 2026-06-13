@@ -1,0 +1,56 @@
+{
+  "description": "Autocomplete suggestion engines for the three input modes. Each section names the function under test and supplies the context it reads from. Results are already limited/sliced and ordered exactly as the implementation produces them.",
+  "command": {
+    "function": "computeCommandSuggestions",
+    "notes": "Before a space: view-shortcut keys + context/bulk commands (prefix matches first, then substring), sliced to 6. Exact context commands (home/homes/ctx/context) return []. After a space: home names for context prefixes, otherwise area names (alphabetical when no query), each prefixed with the typed view token, sliced to 6.",
+    "areas": [
+      { "area_id": "kitchen", "name": "Kitchen", "picture": null },
+      { "area_id": "living_room", "name": "Living Room", "picture": null },
+      { "area_id": "bedroom", "name": "Bedroom", "picture": null }
+    ],
+    "homes": [
+      { "name": "Home", "url": "http://home.local:8123", "token": "t1" },
+      { "name": "Cabin", "url": "http://cabin.local:8123", "token": "t2" }
+    ],
+    "cases": [
+      { "buffer": "", "expect": ["all", "lights", "light", "switches", "switch", "sensors"] },
+      { "buffer": "li", "expect": ["lights", "light", "climate"] },
+      { "buffer": "home", "expect": [] },
+      { "buffer": "lights ", "expect": ["lights Bedroom", "lights Kitchen", "lights Living Room"] },
+      { "buffer": "lights kit", "expect": ["lights Kitchen"] },
+      { "buffer": "home ", "expect": ["home Home", "home Cabin"] },
+      { "buffer": "home ca", "expect": ["home Cabin"] }
+    ]
+  },
+  "area": {
+    "function": "computeAreaSuggestions",
+    "notes": "Area-assignment input mode. Prefix matches first, then substring matches, sliced to 8. Empty buffer returns first 8 area names in source order.",
+    "areas": [
+      { "area_id": "kitchen", "name": "Kitchen", "picture": null },
+      { "area_id": "living_room", "name": "Living Room", "picture": null },
+      { "area_id": "bedroom", "name": "Bedroom", "picture": null }
+    ],
+    "cases": [
+      { "buffer": "", "expect": ["Kitchen", "Living Room", "Bedroom"] },
+      { "buffer": "b", "expect": ["Bedroom"] },
+      { "buffer": "room", "expect": ["Living Room", "Bedroom"] },
+      { "buffer": "xyz", "expect": [] }
+    ]
+  },
+  "filter": {
+    "function": "computeFilterSuggestions",
+    "notes": "Text-only suggestions. Order: friendly-name prefix matches, then friendly-name substring matches, then entity_id substring matches. De-duplicated by friendly name, sliced to 6. Empty query returns [].",
+    "entities": [
+      { "entity_id": "light.kitchen", "state": "on", "attributes": { "friendly_name": "Kitchen Light" }, "last_changed": "2025-01-01T00:00:00.000Z", "last_updated": "2025-01-01T00:00:00.000Z", "context": { "id": "c1", "parent_id": null, "user_id": null } },
+      { "entity_id": "light.bedroom", "state": "off", "attributes": { "friendly_name": "Bedroom Light" }, "last_changed": "2025-01-01T00:00:00.000Z", "last_updated": "2025-01-01T00:00:00.000Z", "context": { "id": "c2", "parent_id": null, "user_id": null } },
+      { "entity_id": "switch.coffee", "state": "on", "attributes": { "friendly_name": "Coffee Maker" }, "last_changed": "2025-01-01T00:00:00.000Z", "last_updated": "2025-01-01T00:00:00.000Z", "context": { "id": "c3", "parent_id": null, "user_id": null } }
+    ],
+    "cases": [
+      { "query": "", "expect": [] },
+      { "query": "kit", "expect": ["Kitchen Light"] },
+      { "query": "light", "expect": ["Kitchen Light", "Bedroom Light"] },
+      { "query": "coffee", "expect": ["Coffee Maker"] },
+      { "query": "zzz", "expect": [] }
+    ]
+  }
+}
