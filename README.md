@@ -23,26 +23,37 @@ Navigate your entire Home Assistant setup from the terminal — just like `k9s` 
 
 ## Quick Start
 
-### Install from npm (recommended)
+### Install pre-built binary (recommended)
+
+Download the latest binary for your platform from the [Releases](https://github.com/imaustink/hatui/releases) page, then move it onto your `PATH`:
 
 ```bash
-npm install -g @k5s/hom3
+# Example for macOS arm64
+curl -L https://github.com/imaustink/hatui/releases/latest/download/hom3-darwin-arm64 \
+  -o /usr/local/bin/hom3 && chmod +x /usr/local/bin/hom3
 ```
 
-Then run:
+### Install with Go
+
+Requires Go 1.23+:
 
 ```bash
-hom3
+go install github.com/imaustink/hatui@latest
 ```
 
-### Install from source
+The binary is installed as `hatui` in `$GOPATH/bin`. Rename or alias it if you prefer `hom3`:
 
 ```bash
-git clone https://github.com/you/hom3
-cd hom3
-npm install
-npm run build
-npm start
+ln -s "$(go env GOPATH)/bin/hatui" /usr/local/bin/hom3
+```
+
+### Build from source
+
+```bash
+git clone https://github.com/imaustink/hatui
+cd hatui
+make build          # produces dist/hom3
+sudo mv dist/hom3 /usr/local/bin/hom3
 ```
 
 ### Configure
@@ -75,15 +86,21 @@ Get a token: **HA → Profile → Long-Lived Access Tokens**
 | `g` / `Home` | Jump to top |
 | `G` / `End` | Jump to bottom |
 | `PgUp` / `PgDn` | Page up/down |
-| `Enter` | Activate selected entity |
-| `:` | Open command mode |
-| `/` | Filter (fuzzy search) |
-| `t` | Toggle selected entity |
-| `+` / `-` | Adjust brightness, temperature, volume, etc. |
+| `Enter` | Activate selected entity (scenes, scripts, buttons, vacuums) |
+| `t` | Toggle selected entity on/off |
+| `Space` | Play/pause (media player), start/dock (vacuum), toggle (others) |
+| `+` / `=` | Adjust brightness, temperature, volume, fan speed up |
+| `-` / `_` | Adjust brightness, temperature, volume, fan speed down |
+| `m` | Cycle HVAC mode (climate) or next option (select/input_select) |
+| `o` / `c` / `s` | Cover: open / close / stop |
+| `[` / `]` | Media: previous / next track |
+| `O` | Bulk turn **off** all currently visible entities |
+| `I` | Bulk turn **on** all currently visible entities |
 | `d` | Toggle detail panel |
 | `n` | Rename selected entity |
 | `a` | Set area for selected entity |
 | `r` | Refresh all states |
+| `1`–`5` | Jump to recent area |
 | `C` | Open context switcher (multi-home) |
 | `?` | Toggle help overlay |
 | `q` / `Ctrl+C` | Quit |
@@ -92,7 +109,18 @@ Get a token: **HA → Profile → Long-Lived Access Tokens**
 
 ## View Commands
 
-Type `:` then any of the following:
+Type `:` to enter command mode. Commands are **area-first**: type an area name, optionally followed by a device type.
+
+### Area + type examples
+
+| Command | Effect |
+|---------|--------|
+| `:bedroom` | All devices in bedroom |
+| `:bedroom lights` | Lights in bedroom |
+| `:back porch` | All devices in back porch |
+| `:back porch switches` | Switches in back porch |
+
+### Device-type shortcuts (no area filter)
 
 | Command | View |
 |---------|------|
@@ -117,10 +145,15 @@ Type `:` then any of the following:
 | `:numbers` | Number inputs |
 | `:selects` | Select inputs |
 | `:inputs` | Input helpers |
+
+### Bulk & utility commands
+
+| Command | Effect |
+|---------|--------|
+| `:on` | Turn on all currently visible entities |
+| `:off` | Turn off all currently visible entities |
 | `:homes` / `:ctx` | Context switcher (multi-home) |
 | `:quit` | Quit |
-
-Append an area name to scope a view: `:lights kitchen`, `:sensors bedroom`
 
 ---
 
@@ -177,13 +210,18 @@ HOM3 loads config in this order of precedence:
 ## Project Structure
 
 ```
-src/
-├── index.ts        # Entry point, config loading
-├── app.ts          # Main app controller, key bindings, event loop
-├── hass-client.ts  # Home Assistant WebSocket client
-├── renderer.ts     # All rendering logic (rows, detail, bars)
-├── widgets.ts      # blessed widget factories
-├── theme.ts        # Colors, icons, state formatters
-└── types.ts        # TypeScript types
+main.go             # Entry point
+cmd/
+├── root.go         # Root cobra command, TUI launch
+├── get.go          # `hom3 get` subcommand
+└── control.go      # `hom3 control` subcommand
+internal/
+├── client/         # Home Assistant WebSocket client
+├── config/         # Config loading (flags → env → file)
+├── model/          # Entity, area, device types
+├── color/          # Theme colours and state formatters
+├── render/         # Pure rendering functions
+├── ui/             # tview widget factories
+└── view/           # App controller, key bindings, event loop
 ```
 

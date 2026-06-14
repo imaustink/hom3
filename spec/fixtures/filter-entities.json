@@ -1,5 +1,5 @@
 {
-  "description": "Filters an entity list by view (device-type), free-text filter, and area filter. Input order is preserved (sorting happens elsewhere). View 'all' applies no domain filter. Free-text matches (case-insensitive substring) against entity_id, friendly name, or state. Area filter matches (case-insensitive substring) against the entity's mapped area name (empty string when unmapped).",
+  "description": "Filters an entity list by view (device-type), free-text filter, and area filter. Results are sorted alphabetically by friendly name. View 'all' applies no domain filter. Free-text matches (case-insensitive substring) against entity_id, friendly name, or state. Area filter matches (case-insensitive exact) against the entity's mapped area name (empty string when unmapped).",
   "function": "filterEntities",
   "entities": [
     { "entity_id": "light.kitchen", "state": "on", "attributes": { "friendly_name": "Kitchen Light" }, "last_changed": "2025-01-01T00:00:00.000Z", "last_updated": "2025-01-01T00:00:00.000Z", "context": { "id": "c1", "parent_id": null, "user_id": null } },
@@ -13,14 +13,14 @@
     "light.bedroom": "Bedroom"
   },
   "cases": [
-    { "view": "all", "filter": "", "areaFilter": "", "expect": ["light.kitchen", "light.bedroom", "switch.coffee", "sensor.temp"] },
-    { "view": "lights", "filter": "", "areaFilter": "", "expect": ["light.kitchen", "light.bedroom"] },
+    { "view": "all", "filter": "", "areaFilter": "", "expect": ["light.bedroom", "switch.coffee", "light.kitchen", "sensor.temp"] },
+    { "view": "lights", "filter": "", "areaFilter": "", "expect": ["light.bedroom", "light.kitchen"] },
     { "view": "switches", "filter": "", "areaFilter": "", "expect": ["switch.coffee"] },
     { "view": "sensors", "filter": "", "areaFilter": "", "expect": ["sensor.temp"] },
     { "view": "all", "filter": "kitchen", "areaFilter": "", "expect": ["light.kitchen"] },
-    { "view": "all", "filter": "on", "areaFilter": "", "expect": ["light.kitchen", "switch.coffee"] },
+    { "view": "all", "filter": "on", "areaFilter": "", "expect": ["switch.coffee", "light.kitchen"] },
     { "view": "all", "filter": "coffee", "areaFilter": "", "expect": ["switch.coffee"] },
-    { "view": "all", "filter": "", "areaFilter": "kitchen", "expect": ["light.kitchen", "switch.coffee"] },
+    { "view": "all", "filter": "", "areaFilter": "kitchen", "expect": ["switch.coffee", "light.kitchen"] },
     { "view": "lights", "filter": "", "areaFilter": "bedroom", "expect": ["light.bedroom"] },
     { "view": "lights", "filter": "kitchen", "areaFilter": "kitchen", "expect": ["light.kitchen"] },
     { "view": "all", "filter": "xyz", "areaFilter": "", "expect": [] }

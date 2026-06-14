@@ -2,22 +2,24 @@
   "description": "Autocomplete suggestion engines for the three input modes. Each section names the function under test and supplies the context it reads from. Results are already limited/sliced and ordered exactly as the implementation produces them.",
   "command": {
     "function": "computeCommandSuggestions",
-    "notes": "Before a space: view-shortcut keys + context/bulk commands (prefix matches first, then substring), sliced to 6. Exact context commands (home/homes/ctx/context) return []. After a space: home names for context prefixes, otherwise area names (alphabetical when no query), each prefixed with the typed view token, sliced to 6.",
+    "notes": "Before a space: area names first (prefix then substring), then shortcut keywords, sliced to 6. Exact context commands (home/homes/ctx/context) return []. After a space: if prefix is an exact area name, suggest device-type shortcuts; otherwise keep suggesting area names matching the full buffer. Home names complete after context commands.",
     "areas": [
       { "area_id": "kitchen", "name": "Kitchen", "picture": null },
       { "area_id": "living_room", "name": "Living Room", "picture": null },
-      { "area_id": "bedroom", "name": "Bedroom", "picture": null }
+      { "area_id": "bedroom", "name": "Bedroom", "picture": null },
+      { "area_id": "office", "name": "Office", "picture": null }
     ],
     "homes": [
       { "name": "Home", "url": "http://home.local:8123", "token": "t1" },
       { "name": "Cabin", "url": "http://cabin.local:8123", "token": "t2" }
     ],
     "cases": [
-      { "buffer": "", "expect": ["all", "lights", "light", "switches", "switch", "sensors"] },
-      { "buffer": "li", "expect": ["lights", "light", "climate"] },
+      { "buffer": "", "expect": ["Bedroom", "Kitchen", "Living Room", "Office", "all", "lights"] },
+      { "buffer": "li", "expect": ["Living Room", "lights", "light", "climate"] },
       { "buffer": "home", "expect": [] },
-      { "buffer": "lights ", "expect": ["lights Bedroom", "lights Kitchen", "lights Living Room"] },
-      { "buffer": "lights kit", "expect": ["lights Kitchen"] },
+      { "buffer": "off", "expect": ["Office"] },
+      { "buffer": "Kitchen ", "expect": ["Kitchen all", "Kitchen lights", "Kitchen light", "Kitchen switches", "Kitchen switch", "Kitchen sensors"] },
+      { "buffer": "Kitchen li", "expect": ["Kitchen lights", "Kitchen light", "Kitchen climate"] },
       { "buffer": "home ", "expect": ["home Home", "home Cabin"] },
       { "buffer": "home ca", "expect": ["home Cabin"] }
     ]

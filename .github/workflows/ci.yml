@@ -11,10 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-go@v5
         with:
-          node-version: 24
+          go-version-file: go.mod
+          cache: true
 
-      - run: npm ci
+      - name: Verify dependencies
+        run: go mod verify
 
-      - run: npm test
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./...
+
+      - name: Vet
+        run: go vet ./...
