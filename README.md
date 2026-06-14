@@ -30,7 +30,7 @@ Download the latest binary for your platform from the [Releases](https://github.
 ```bash
 # Example for macOS arm64
 curl -L https://github.com/imaustink/hom3/releases/latest/download/hom3-darwin-arm64 \
-  -o /usr/local/bin/hom3 && chmod +x /usr/local/bin/hom3
+  -o /tmp/hom3 && sudo mv /tmp/hom3 /usr/local/bin/hom3 && sudo chmod +x /usr/local/bin/hom3
 ```
 
 ### Install with Go
