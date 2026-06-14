@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/imaustink/hatui/internal/model"
+	"github.com/imaustink/hom3/internal/model"
 )
 
 // TestDeviceTypesConformance asserts DEVICE_TYPE_DOMAINS and DEVICE_TYPE_SHORTCUTS

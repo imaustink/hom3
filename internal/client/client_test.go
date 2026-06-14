@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/imaustink/hatui/internal/client"
-	"github.com/imaustink/hatui/internal/model"
+	"github.com/imaustink/hom3/internal/client"
+	"github.com/imaustink/hom3/internal/model"
 )
 
 // capturedCall records a single service call made through the mock sendFn.

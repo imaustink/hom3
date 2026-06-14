@@ -9,7 +9,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	clr "github.com/imaustink/hatui/internal/color"
+	clr "github.com/imaustink/hom3/internal/color"
 )
 
 // ─────────────────────────────────────────────── Widget factories ──

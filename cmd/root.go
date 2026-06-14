@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/imaustink/hatui/internal/client"
-	"github.com/imaustink/hatui/internal/config"
-	"github.com/imaustink/hatui/internal/view"
+	"github.com/imaustink/hom3/internal/client"
+	"github.com/imaustink/hom3/internal/config"
+	"github.com/imaustink/hom3/internal/view"
 	"github.com/spf13/cobra"
 )
 

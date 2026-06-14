@@ -7,10 +7,10 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/imaustink/hatui/internal/client"
-	"github.com/imaustink/hatui/internal/color"
-	"github.com/imaustink/hatui/internal/config"
-	"github.com/imaustink/hatui/internal/model"
+	"github.com/imaustink/hom3/internal/client"
+	"github.com/imaustink/hom3/internal/color"
+	"github.com/imaustink/hom3/internal/config"
+	"github.com/imaustink/hom3/internal/model"
 	"github.com/spf13/cobra"
 )
 

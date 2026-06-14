@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/imaustink/hatui/internal/model"
+	"github.com/imaustink/hom3/internal/model"
 )
 
 // ─────────────────────────────────────────────── Public event types ──

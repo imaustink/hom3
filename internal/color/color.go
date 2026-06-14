@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/imaustink/hatui/internal/model"
+	"github.com/imaustink/hom3/internal/model"
 )
 
 // ─────────────────────────────────────────────── Palette tokens ──

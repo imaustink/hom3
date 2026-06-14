@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	clr "github.com/imaustink/hatui/internal/color"
-	"github.com/imaustink/hatui/internal/model"
+	clr "github.com/imaustink/hom3/internal/color"
+	"github.com/imaustink/hom3/internal/model"
 )
 
 // ─────────────────────────────────────────────── Entity filtering ──

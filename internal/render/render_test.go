@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/imaustink/hatui/internal/model"
-	"github.com/imaustink/hatui/internal/render"
+	"github.com/imaustink/hom3/internal/model"
+	"github.com/imaustink/hom3/internal/render"
 )
 
 // ─── filter-entities ────────────────────────────────────────────
