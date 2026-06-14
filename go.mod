@@ -1,4 +1,4 @@
-module github.com/imaustink/hatui
+module github.com/imaustink/hom3
 
 go 1.23
 

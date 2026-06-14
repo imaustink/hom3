@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/imaustink/hatui/internal/model"
+	"github.com/imaustink/hom3/internal/model"
 	"github.com/joho/godotenv"
 )
 

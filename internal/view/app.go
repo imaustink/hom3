@@ -11,11 +11,11 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/imaustink/hatui/internal/client"
-	clr "github.com/imaustink/hatui/internal/color"
-	"github.com/imaustink/hatui/internal/model"
-	"github.com/imaustink/hatui/internal/render"
-	"github.com/imaustink/hatui/internal/ui"
+	"github.com/imaustink/hom3/internal/client"
+	clr "github.com/imaustink/hom3/internal/color"
+	"github.com/imaustink/hom3/internal/model"
+	"github.com/imaustink/hom3/internal/render"
+	"github.com/imaustink/hom3/internal/ui"
 )
 
 // ─────────────────────────────────────────────── App ──

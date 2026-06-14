@@ -25,11 +25,11 @@ Navigate your entire Home Assistant setup from the terminal — just like `k9s` 
 
 ### Install pre-built binary (recommended)
 
-Download the latest binary for your platform from the [Releases](https://github.com/imaustink/hatui/releases) page, then move it onto your `PATH`:
+Download the latest binary for your platform from the [Releases](https://github.com/imaustink/hom3/releases) page, then move it onto your `PATH`:
 
 ```bash
 # Example for macOS arm64
-curl -L https://github.com/imaustink/hatui/releases/latest/download/hom3-darwin-arm64 \
+curl -L https://github.com/imaustink/hom3/releases/latest/download/hom3-darwin-arm64 \
   -o /usr/local/bin/hom3 && chmod +x /usr/local/bin/hom3
 ```
 
@@ -38,20 +38,16 @@ curl -L https://github.com/imaustink/hatui/releases/latest/download/hom3-darwin-
 Requires Go 1.23+:
 
 ```bash
-go install github.com/imaustink/hatui@latest
+go install github.com/imaustink/hom3@latest
 ```
 
-The binary is installed as `hatui` in `$GOPATH/bin`. Rename or alias it if you prefer `hom3`:
-
-```bash
-ln -s "$(go env GOPATH)/bin/hatui" /usr/local/bin/hom3
-```
+The binary is installed as `hom3` in `$GOPATH/bin`.
 
 ### Build from source
 
 ```bash
-git clone https://github.com/imaustink/hatui
-cd hatui
+git clone https://github.com/imaustink/hom3
+cd hom3
 make build          # produces dist/hom3
 sudo mv dist/hom3 /usr/local/bin/hom3
 ```

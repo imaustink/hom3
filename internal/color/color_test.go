@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/imaustink/hatui/internal/color"
-	"github.com/imaustink/hatui/internal/model"
+	"github.com/imaustink/hom3/internal/color"
+	"github.com/imaustink/hom3/internal/model"
 )
 
 // ─── state-color ────────────────────────────────────────────────
