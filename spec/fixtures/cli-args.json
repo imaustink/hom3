@@ -1,0 +1,18 @@
+{
+  "description": "Parses CLI argv (after --url/--token have been stripped) into a structured command. Returns null when there are no positional subcommands (signals interactive TUI mode). Flags: --domain/-d, --search/-s, --area/-A, --entity/-e, --data, --output/-o (json|table|wide, default table). Positionals map to subcommand, resource, target in order. 'output' always defaults to 'table'.",
+  "function": "parseCliArgs",
+  "cases": [
+    { "args": [], "expect": null },
+    { "args": ["-o", "json"], "expect": null },
+    { "args": ["get", "entities"], "expect": { "subcommand": "get", "resource": "entities", "output": "table" } },
+    { "args": ["get", "entities", "--domain", "lights"], "expect": { "subcommand": "get", "resource": "entities", "domain": "lights", "output": "table" } },
+    { "args": ["get", "entities", "-d", "switch", "-s", "kitchen"], "expect": { "subcommand": "get", "resource": "entities", "domain": "switch", "search": "kitchen", "output": "table" } },
+    { "args": ["get", "entity", "light.x", "-o", "json"], "expect": { "subcommand": "get", "resource": "entity", "target": "light.x", "output": "json" } },
+    { "args": ["get", "entities", "-o", "wide"], "expect": { "subcommand": "get", "resource": "entities", "output": "wide" } },
+    { "args": ["get", "entities", "-o", "bogus"], "expect": { "subcommand": "get", "resource": "entities", "output": "table" } },
+    { "args": ["toggle", "light.x"], "expect": { "subcommand": "toggle", "resource": "light.x", "output": "table" } },
+    { "args": ["turn-on", "--area", "Kitchen", "--domain", "switch"], "expect": { "subcommand": "turn-on", "area": "Kitchen", "domain": "switch", "output": "table" } },
+    { "args": ["turn-off", "-A", "Living Room"], "expect": { "subcommand": "turn-off", "area": "Living Room", "output": "table" } },
+    { "args": ["call", "light", "turn_on", "--entity", "light.x", "--data", "{\"brightness\":50}"], "expect": { "subcommand": "call", "resource": "light", "target": "turn_on", "entity": "light.x", "data": "{\"brightness\":50}", "output": "table" } }
+  ]
+}

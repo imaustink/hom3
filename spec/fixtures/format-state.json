@@ -1,0 +1,33 @@
+{
+  "description": "Formats an entity's state for display. Behavior is domain-specific. Domain is the substring before the first '.' in entity_id.",
+  "function": "formatState",
+  "rules": [
+    "light + state 'on' + numeric 'brightness' attr: 'on (P%)' where P = round(brightness / 255 * 100)",
+    "light + state 'on' without brightness: 'on'",
+    "light not 'on': plain state (brightness ignored)",
+    "climate with numeric 'current_temperature': '<state> <cur>°→<target>°' (target '?' when 'temperature' missing)",
+    "climate without 'current_temperature': plain state",
+    "sensor or number with 'unit_of_measurement': '<state> <unit>'; without unit: plain state",
+    "media_player + state 'playing' + 'media_title': '♫ ' + first 20 chars of title; without title: 'playing'",
+    "all other cases: plain state"
+  ],
+  "cases": [
+    { "entity": { "entity_id": "switch.fan", "state": "on", "attributes": {} }, "expect": "on" },
+    { "entity": { "entity_id": "light.bedroom", "state": "on", "attributes": { "brightness": 128 } }, "expect": "on (50%)" },
+    { "entity": { "entity_id": "light.bedroom", "state": "on", "attributes": { "brightness": 255 } }, "expect": "on (100%)" },
+    { "entity": { "entity_id": "light.bedroom", "state": "on", "attributes": { "brightness": 1 } }, "expect": "on (0%)" },
+    { "entity": { "entity_id": "light.bedroom", "state": "on", "attributes": {} }, "expect": "on" },
+    { "entity": { "entity_id": "light.bedroom", "state": "off", "attributes": { "brightness": 200 } }, "expect": "off" },
+    { "entity": { "entity_id": "climate.thermostat", "state": "heat", "attributes": { "current_temperature": 20, "temperature": 22 } }, "expect": "heat 20°→22°" },
+    { "entity": { "entity_id": "climate.thermostat", "state": "heat", "attributes": { "current_temperature": 20 } }, "expect": "heat 20°→?°" },
+    { "entity": { "entity_id": "climate.thermostat", "state": "heat", "attributes": { "temperature": 22 } }, "expect": "heat" },
+    { "entity": { "entity_id": "sensor.temperature", "state": "21.5", "attributes": { "unit_of_measurement": "°C" } }, "expect": "21.5 °C" },
+    { "entity": { "entity_id": "sensor.boolean_sensor", "state": "on", "attributes": {} }, "expect": "on" },
+    { "entity": { "entity_id": "number.threshold", "state": "5", "attributes": { "unit_of_measurement": "%" } }, "expect": "5 %" },
+    { "entity": { "entity_id": "number.threshold", "state": "5", "attributes": {} }, "expect": "5" },
+    { "entity": { "entity_id": "media_player.tv", "state": "playing", "attributes": { "media_title": "My Favourite Song" } }, "expect": "♫ My Favourite Song" },
+    { "entity": { "entity_id": "media_player.tv", "state": "playing", "attributes": { "media_title": "A Very Very Very Long Title Here" } }, "expect": "♫ A Very Very Very Lon" },
+    { "entity": { "entity_id": "media_player.tv", "state": "playing", "attributes": {} }, "expect": "playing" },
+    { "entity": { "entity_id": "media_player.tv", "state": "paused", "attributes": { "media_title": "Song" } }, "expect": "paused" }
+  ]
+}

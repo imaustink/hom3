@@ -1,4 +1,4 @@
-name: Publish to npm
+name: Release
 
 on:
   push:
@@ -6,23 +6,48 @@ on:
       - 'v*'
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      id-token: write
+      contents: write
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-go@v5
         with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
+          go-version-file: go.mod
+          cache: true
 
-      - run: npm ci
+      - name: Test
+        if: matrix.goos == 'linux' && matrix.goarch == 'amd64'
+        run: go test ./...
 
-      - run: npm test
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          EXT=""
+          [[ "${{ matrix.goos }}" == "windows" ]] && EXT=".exe"
+          go build -ldflags="-s -w -X main.version=${{ github.ref_name }}" \
+            -o "dist/hom3-${{ matrix.goos }}-${{ matrix.goarch }}${EXT}" .
 
-      - run: npm run build
-
-      - run: npm publish --access public
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/hom3-*
+          generate_release_notes: true
